@@ -13,16 +13,20 @@ class GetBooksController
 
     private SubscriptionsBooksModel $subscriptionsBooksModel;
 
-    private PhpRenderer $renderer;
 
-    public function __construct(SubscriptionsBooksModel $subscriptionsBooksModel, PhpRenderer $renderer)
+    public function __construct(SubscriptionsBooksModel $subscriptionsBooksModel)
     {
         $this->subscriptionsBooksModel = $subscriptionsBooksModel;
-        $this->renderer = $renderer;
     }
 
     public function __invoke(RequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        return $this->renderer->render($response, 'getBooksView.phtml', ['booksArray' => $this->subscriptionsBooksModel->getAll()]);
+        $books = $this->subscriptionsBooksModel->getAll();
+        $responseBody = [
+            'message' => 'Books successfully retrieved from database.',
+            'status' => 200,
+            'data' => $books
+        ];
+        return $response->withHeader('Access-Control-Allow-Origin', '*')->withJson($responseBody);
     }
 }

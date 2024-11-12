@@ -27,4 +27,12 @@ class SubscriptionsBooksModel
         $books = $query->fetchAll();
         return $books;
     }
+
+    public function getCategories()
+    {
+        $query = $this->db->prepare('SELECT DISTINCT `subject` FROM `books`');
+        $query->execute();
+        $categories = $query->fetchAll();
+        return $categories;
+    }
 }
