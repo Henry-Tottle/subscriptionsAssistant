@@ -7,6 +7,7 @@ use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 use App\Controllers\GetBooksController;
 use App\Controllers\GetBooksByCategoryController;
 use App\Controllers\GetCategoriesController;
+use App\Controllers\GetBooksByID;
 return function (App $app) {
     $container = $app->getContainer();
 
@@ -20,4 +21,5 @@ return function (App $app) {
     $app->get('/books', GetBooksController::class);
     $app->get('/books/{category}', GetBooksByCategoryController::class);
     $app->get('/categories', GetCategoriesController::class);
+    $app->get('/book/{id}', GetBooksByID::class);
 };

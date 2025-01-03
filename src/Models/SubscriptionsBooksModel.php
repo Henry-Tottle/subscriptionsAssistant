@@ -35,4 +35,12 @@ class SubscriptionsBooksModel
         $categories = $query->fetchAll();
         return $categories;
     }
+
+    public function getBooksByID($id)
+    {
+        $query = $this->db->prepare('SELECT * FROM `books` WHERE `id` = :id');
+        $query->execute(['id' => $id]);
+        $books = $query->fetch();
+        return $books;
+    }
 }
