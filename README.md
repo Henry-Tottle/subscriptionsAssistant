@@ -1,8 +1,9 @@
-# Slim Framework 4 Skeleton Application
-
-Use this skeleton application to quickly setup and start working on a new Slim Framework 4 application. This application uses the latest Slim 4 with Slim PSR-7 implementation and PHP-DI container implementation along with the PHP-View template renderer. It also uses the Monolog logger.
-
-This skeleton application was built for Composer. This makes setting up a new Slim Framework application quick and easy.
+An API created to serve a React front end to display books and their accompanying information.
+Routes: (yes I need to tidy this up)
+```/books``` GET - gets all books from database (currently limited to 100)
+```/books/{category}``` GET - gets all books in a certain category (currently limited to 100)
+```/categories``` GET - gets all distinct categories
+```/book/{id}``` GET - gets a particular book by ID
 
 ## Install the Application
 
@@ -30,6 +31,10 @@ To run the application locally:
 composer start
 
 ```
+
+Import '/public/subscriptions_test_database_2025-01-06.sql'
+
+
 Run this command in the application directory to run the test suite
 ```bash
 composer test

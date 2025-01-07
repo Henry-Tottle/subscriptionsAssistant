@@ -19,7 +19,7 @@ return function (ContainerBuilder $containerBuilder) {
             ],
             'db' => [
                 'host' => 'mysql:host=127.0.0.1;',
-                'name' => 'dbname=subscription_books',
+                'name' => 'dbname=subscriptions_test_database',
                 'user' => 'root',
                 'password' => 'password',
                 'debug' => true
