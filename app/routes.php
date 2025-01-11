@@ -8,6 +8,7 @@ use App\Controllers\GetBooksController;
 use App\Controllers\GetBooksByCategoryController;
 use App\Controllers\GetCategoriesController;
 use App\Controllers\GetBooksByID;
+use App\Controllers\AddTagsController;
 return function (App $app) {
     $container = $app->getContainer();
 
@@ -22,4 +23,5 @@ return function (App $app) {
     $app->get('/books/{category}', GetBooksByCategoryController::class);
     $app->get('/categories', GetCategoriesController::class);
     $app->get('/book/{id}', GetBooksByID::class);
+    $app->post('/books/add-tag', AddTagsController::class);
 };
