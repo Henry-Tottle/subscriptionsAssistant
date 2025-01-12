@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
+use App\Controllers\GetTagsController;
 use Slim\App;
 use Slim\Views\PhpRenderer;
-use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 use App\Controllers\GetBooksController;
 use App\Controllers\GetBooksByCategoryController;
 use App\Controllers\GetCategoriesController;
@@ -23,5 +23,6 @@ return function (App $app) {
     $app->get('/books/{category}', GetBooksByCategoryController::class);
     $app->get('/categories', GetCategoriesController::class);
     $app->get('/book/{id}', GetBooksByID::class);
+    $app->get('/book/{id}/tags', GetTagsController::class);
     $app->post('/books/add-tag', AddTagsController::class);
 };

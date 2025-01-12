@@ -15,14 +15,14 @@ class SubscriptionsBooksModel
     }
     public function getAll()
     {
-        $query = $this->db->prepare("SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`, `tag`  FROM `books` LEFT JOIN `tags` ON `books`.`id` = `tags`.`book_id` ORDER BY picksCount DESC LIMIT 100");
+        $query = $this->db->prepare("SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` ORDER BY picksCount DESC LIMIT 100");
         $query->execute();
         $books = $query->fetchAll();
         return $books;
     }
     public function getBooksByCategory($category)
     {
-        $query = $this->db->prepare('SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`, `tag`  FROM `books` LEFT JOIN `tags` ON `books`.`id` = `tags`.`book_id` WHERE `subject` = :category ORDER BY picksCount DESC LIMIT 100');
+        $query = $this->db->prepare('SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` WHERE `subject` = :category ORDER BY picksCount DESC LIMIT 100');
         $query->execute(['category' => $category]);
         $books = $query->fetchAll(PDO::FETCH_ASSOC);
         return $books;
@@ -50,14 +50,20 @@ class SubscriptionsBooksModel
             `subject`, 
             `price`, 
             `picksCount`, 
-            `image`, 
-            COALESCE(`tags`.`tag`, "No tags") AS `tag` 
+            `image`
         FROM `books` 
-        LEFT JOIN `tags` ON `books`.`id` = `tags`.`book_id` 
-        WHERE `books`.`id` = :id
-    ');        $query->execute(['id' => $id]);
+        WHERE `books`.`id` = :id');
+        $query->execute(['id' => $id]);
         $books = $query->fetch(PDO::FETCH_ASSOC);
         return $books;
+    }
+
+    public function getTagsByBookID($id)
+    {
+        $query = $this->db->prepare('SELECT * FROM `tags` WHERE `book_id` = :id');
+        $query->execute(['id' => $id]);
+        $tags = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $tags;
     }
 
     public function addTag($id, $tag)
