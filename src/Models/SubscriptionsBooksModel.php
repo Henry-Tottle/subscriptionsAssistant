@@ -15,14 +15,14 @@ class SubscriptionsBooksModel
     }
     public function getAll()
     {
-        $query = $this->db->prepare("SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` ORDER BY picksCount DESC LIMIT 100");
+        $query = $this->db->prepare("SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` ORDER BY picksCount DESC LIMIT 50");
         $query->execute();
         $books = $query->fetchAll();
         return $books;
     }
     public function getBooksByCategory($category)
     {
-        $query = $this->db->prepare('SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` WHERE `subject` = :category ORDER BY picksCount DESC LIMIT 100');
+        $query = $this->db->prepare('SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` WHERE `subject` = :category ORDER BY picksCount DESC LIMIT 50');
         $query->execute(['category' => $category]);
         $books = $query->fetchAll(PDO::FETCH_ASSOC);
         return $books;

@@ -19,12 +19,12 @@ $books = $query->fetchAll();
 //
 //}
 
-$fantasyBooks = file_get_contents('fantasyISBNS.txt');
+$fantasyBooks = file_get_contents('crimeISBNS.txt');
 $fantasyBooksArray = explode(',',$fantasyBooks);
 echo gettype($fantasyBooksArray);
 //var_dump($fantasyBooksArray);
 foreach($fantasyBooksArray as $fantasyBook){
-    $subject = '["FANTASY"]';
+    $subject = '["CRIME & MYSTERY"]';
     $fantasyBook = trim($fantasyBook);
     try {
         $query = $db->prepare('UPDATE `books` SET `subject` = :subject WHERE `isbn` = :isbn');

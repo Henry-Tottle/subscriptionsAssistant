@@ -26,9 +26,22 @@ class AddTagsController
                 ->withStatus(200);
         }
 
-        $data = $request->getParsedBody();
-        $tag = $data['tag'];
-        $id = $data['book_id'];
+        $body = $request->getBody()->getContents();
+        parse_str($body, $data);
+        $tag = $data['tag'] ?? null;
+        $id = $data['book_id'] ?? null;
+
+        if(!$tag || !$id)
+        {
+            $errorResponse = [
+                'message' => 'Invalid input. "tag" and "book_id" are required',
+                'status' => 400
+            ];
+            return $response->withHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
+                            ->withHeader('Content-Type', 'application/json')
+                            ->withStatus(400)
+                            ->withJson($errorResponse);
+        }
 
         $this->model->addTag($id, $tag);
 
@@ -37,11 +50,11 @@ class AddTagsController
             'status' => 201,
             'tag' => $tag
         ];
-        $this->model->addTag($id ,$tag);
+
         return $response->withHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
-                        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-                        ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+                        ->withHeader('Content-Type', 'application/json')
                         ->withHeader('Access-Control-Allow-Credentials', 'true')
+                        ->withStatus(201)
                         ->withJson($responseBody);
     }
 }
