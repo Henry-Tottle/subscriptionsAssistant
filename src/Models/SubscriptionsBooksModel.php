@@ -13,6 +13,7 @@ class SubscriptionsBooksModel
     {
         $this->db = $db;
     }
+
     public function getAll()
     {
         $query = $this->db->prepare("SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` ORDER BY picksCount DESC LIMIT 50");
@@ -20,6 +21,7 @@ class SubscriptionsBooksModel
         $books = $query->fetchAll();
         return $books;
     }
+
     public function getBooksByCategory($category)
     {
         $query = $this->db->prepare('SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` WHERE `subject` = :category ORDER BY picksCount DESC LIMIT 50');
@@ -30,7 +32,7 @@ class SubscriptionsBooksModel
 
     public function getCategories()
     {
-        $query = $this->db->prepare('SELECT DISTINCT `subject` FROM `books`');
+        $query = $this->db->prepare('SELECT DISTINCT `subject` FROM `books` ORDER BY `subject`');
         $query->execute();
         $categories = $query->fetchAll(PDO::FETCH_ASSOC);
         return $categories;
@@ -58,6 +60,14 @@ class SubscriptionsBooksModel
         return $books;
     }
 
+    public function getTags()
+    {
+        $query = $this->db->prepare('SELECT DISTINCT `tag` FROM `tags` ORDER BY `tag`');
+        $query->execute();
+        $tags = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $tags;
+    }
+
     public function getTagsByBookID($id)
     {
         $query = $this->db->prepare('SELECT * FROM `tags` WHERE `book_id` = :id');
@@ -71,5 +81,13 @@ class SubscriptionsBooksModel
         $query = $this->db->prepare('INSERT INTO `tags` (`book_id`, `tag`) VALUES (:book_id, :tag)');
         $query->execute(['book_id' => $id, 'tag' => $tag]);
 
+    }
+
+    public function getBooksByTag($tag)
+    {
+        $query = $this->db->prepare('SELECT * FROM `books` INNER JOIN `tags` ON `books`.`id` = `tags`.`book_id` WHERE `tags`.`tag` = :tag');
+        $query->execute(['tag' => $tag]);
+        $books = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $books;
     }
 }

@@ -26,10 +26,17 @@ class AddTagsController
                 ->withStatus(200);
         }
 
-        $body = $request->getBody()->getContents();
-        parse_str($body, $data);
-        $tag = $data['tag'] ?? null;
-        $id = $data['book_id'] ?? null;
+        if ($request->getMethod() === 'GET')
+        {
+            $queryParams = $request->getQueryParams();
+            $tag = $queryParams['tag'] ?? null;
+            $id = $queryParams['book_id'] ?? null;
+        }
+
+//        $body = $request->getBody()->getContents();
+//        parse_str($body, $data);
+//        $tag = $data['tag'] ?? null;
+//        $id = $data['book_id'] ?? null;
 
         if(!$tag || !$id)
         {

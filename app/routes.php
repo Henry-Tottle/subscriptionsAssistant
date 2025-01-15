@@ -9,6 +9,8 @@ use App\Controllers\GetBooksByCategoryController;
 use App\Controllers\GetCategoriesController;
 use App\Controllers\GetBooksByID;
 use App\Controllers\AddTagsController;
+use App\Controllers\GetBooksByTagController;
+use App\Controllers\GetDistinctTagsController;
 return function (App $app) {
     $container = $app->getContainer();
 
@@ -20,9 +22,11 @@ return function (App $app) {
     });
 
     $app->get('/books', GetBooksController::class);
+    $app->get('/books/actions/add-tag', AddTagsController::class);
+    $app->get('/books/tags', GetDistinctTagsController::class);
+    $app->get('/books/tags/{tag}', GetBooksByTagController::class);
     $app->get('/books/{category}', GetBooksByCategoryController::class);
     $app->get('/categories', GetCategoriesController::class);
     $app->get('/book/{id}', GetBooksByID::class);
     $app->get('/book/{id}/tags', GetTagsController::class);
-    $app->post('/books/add-tag', AddTagsController::class);
 };
