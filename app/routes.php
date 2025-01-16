@@ -22,7 +22,7 @@ return function (App $app) {
     });
 
     $app->get('/books', GetBooksController::class);
-    $app->get('/books/actions/add-tag', AddTagsController::class);
+    $app->post('/books/actions/add-tag', AddTagsController::class);
     $app->get('/books/tags', GetDistinctTagsController::class);
     $app->get('/books/tags/{tag}', GetBooksByTagController::class);
     $app->get('/books/{category}', GetBooksByCategoryController::class);

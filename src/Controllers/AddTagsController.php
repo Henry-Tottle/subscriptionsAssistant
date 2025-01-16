@@ -17,51 +17,57 @@ class AddTagsController
 
     public function __invoke(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        if ($request->getMethod() === 'OPTIONS') {
-            return $response
-                ->withHeader('Access-Control-Allow-Origin', 'http://localhost:5173') // Allow all origins (you can restrict it to specific domains)
-                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-                ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-                ->withHeader('Access-Control-Allow-Credentials', 'true')
-                ->withStatus(200);
-        }
+//        if ($request->getMethod() === 'OPTIONS') {
+//            return $response
+//                ->withHeader('Access-Control-Allow-Origin', '*') // Allow all origins (you can restrict it to specific domains)
+//                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+//                ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+//                ->withHeader('Access-Control-Allow-Credentials', 'true')
+//                ->withStatus(200);
+//        }
 
-        if ($request->getMethod() === 'GET')
-        {
-            $queryParams = $request->getQueryParams();
-            $tag = $queryParams['tag'] ?? null;
-            $id = $queryParams['book_id'] ?? null;
-        }
 
-//        $body = $request->getBody()->getContents();
-//        parse_str($body, $data);
-//        $tag = $data['tag'] ?? null;
-//        $id = $data['book_id'] ?? null;
+        if ($request->getMethod() === 'POST') {
+            $body = $request->getBody()->getContents();
+            $data = json_decode($body, true);
+            $tag = $data['tag'] ?? null;
+            $id = $data['book_id'] ?? null;
+            if (!$tag || !$id) {
+                $errorResponse = [
+                    'message' => 'Invalid input. "tag" and "book_id" are required',
+                    'status' => 400
+                ];
+                return $response->withHeader('Access-Control-Allow-Origin', '*')
+                    ->withHeader('Content-Type', 'application/json')
+                    ->withStatus(400)
+                    ->withJson($errorResponse);
+            }
 
-        if(!$tag || !$id)
-        {
-            $errorResponse = [
-                'message' => 'Invalid input. "tag" and "book_id" are required',
-                'status' => 400
+            $this->model->addTag($id, $tag);
+
+            $responseBody = [
+                'message' => 'Tag successfully added',
+                'status' => 201,
+                'tag' => $tag
             ];
-            return $response->withHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
-                            ->withHeader('Content-Type', 'application/json')
-                            ->withStatus(400)
-                            ->withJson($errorResponse);
+
+            return $response->withHeader('Access-Control-Allow-Origin', '*')
+                ->withHeader('Content-Type', 'application/json')
+//                ->withHeader('Access-Control-Allow-Credentials', 'true')
+                ->withStatus(201)
+                ->withJson($responseBody);
         }
 
-        $this->model->addTag($id, $tag);
-
-        $responseBody = [
-            'message' => 'Tag successfully added',
-            'status' => 201,
-            'tag' => $tag
+        $errorResponse = [
+            'message' => 'Method not allowed',
+            'status' => 405
         ];
 
-        return $response->withHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
-                        ->withHeader('Content-Type', 'application/json')
-                        ->withHeader('Access-Control-Allow-Credentials', 'true')
-                        ->withStatus(201)
-                        ->withJson($responseBody);
+        return $response->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(405)
+            ->withJson($errorResponse);
+
+
     }
 }
