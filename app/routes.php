@@ -11,6 +11,7 @@ use App\Controllers\GetBooksByID;
 use App\Controllers\AddTagsController;
 use App\Controllers\GetBooksByTagController;
 use App\Controllers\GetDistinctTagsController;
+use App\Controllers\GetBooksBySearch;
 return function (App $app) {
     $container = $app->getContainer();
 
@@ -23,6 +24,7 @@ return function (App $app) {
 
     $app->post('/books/actions/add-tag', AddTagsController::class);
     $app->get('/books/tags', GetDistinctTagsController::class);
+    $app->get('/books/search/{search}/{qty}', GetBooksBySearch::class);
     $app->get('/categories', GetCategoriesController::class);
     $app->get('/books/{qty}', GetBooksController::class);
     $app->get('/books/tags/{tag}', GetBooksByTagController::class);

@@ -93,4 +93,14 @@ class SubscriptionsBooksModel
         $books = $query->fetchAll(PDO::FETCH_ASSOC);
         return $books;
     }
+
+    public function getBooksBySearch($search, $qty)
+    {
+        $query = $this->db->prepare('SELECT `id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image` FROM `books` WHERE `title` LIKE :search OR `author` LIKE :search OR `isbn` LIKE :search LIMIT :qty');
+        $query->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+        $query->bindValue(':qty', $qty, PDO::PARAM_INT);
+        $query->execute();
+        $books = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $books;
+    }
 }
