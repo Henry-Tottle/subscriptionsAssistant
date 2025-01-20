@@ -19,12 +19,17 @@ $books = $query->fetchAll();
 //
 //}
 
-$fantasyBooks = file_get_contents('crimeISBNS.txt');
+
+## To Do
+
+//This works great to import subjects into the list, consider reworking and making a function that can be used by a front end?
+
+$fantasyBooks = file_get_contents('historicalFiction.txt');
 $fantasyBooksArray = explode(',',$fantasyBooks);
 echo gettype($fantasyBooksArray);
 //var_dump($fantasyBooksArray);
 foreach($fantasyBooksArray as $fantasyBook){
-    $subject = '["CRIME & MYSTERY"]';
+    $subject = '["HISTORICAL FICTION"]';
     $fantasyBook = trim($fantasyBook);
     try {
         $query = $db->prepare('UPDATE `books` SET `subject` = :subject WHERE `isbn` = :isbn');
@@ -33,3 +38,28 @@ foreach($fantasyBooksArray as $fantasyBook){
         echo 'It didn\'t work...' . $e->getMessage();
     }
 }
+
+
+//$bulkTagImportBooks = file_get_contents('humorousFiction.txt');
+//$bookArray = explode(',', $bulkTagImportBooks);
+//echo gettype($bookArray);
+//var_dump($bookArray);
+//foreach ($bookArray as $book) {
+//    $tag = 'funny fiction';
+//    $book = trim($book);
+//    try {
+//        $query = $db->prepare('SELECT `id` FROM `books` WHERE `isbn` = :book');
+//        $query->execute(['book' => $book]);
+//        $bookId = $query->fetchColumn();
+//    } catch (PDOException $e) {
+//        echo 'It didn\'t work: ' . $e->getMessage();
+//    }
+//
+//    try {
+//        $query = $db->prepare('INSERT INTO `tags` (`book_id`, `tag`) VALUES (:id, :tag)');
+//        $query->execute(['id' => $bookId, 'tag' => $tag]);
+//
+//    } catch (PDOException $e) {
+//        echo 'It didn\'t work: ' . $e->getMessage();
+//    }
+//}

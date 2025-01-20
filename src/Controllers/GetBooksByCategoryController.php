@@ -18,7 +18,7 @@ class GetBooksByCategoryController
 
     public function __invoke(RequestInterface $request, ResponseInterface $response, $args)
     {
-        $books = $this->subscriptionsBooksModel->getBooksByCategory($args['category']);
+        $books = $this->subscriptionsBooksModel->getBooksByCategory($args['category'], $args['qty']);
         $responseBody = [
             'message' => 'Books successfully retrieved from database by category.',
             'status' => 200,

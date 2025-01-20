@@ -14,18 +14,21 @@ class SubscriptionsBooksModel
         $this->db = $db;
     }
 
-    public function getAll()
+    public function getAll($qty)
     {
-        $query = $this->db->prepare("SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` ORDER BY picksCount DESC LIMIT 50");
+        $query = $this->db->prepare("SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` ORDER BY picksCount DESC LIMIT :offset");
+        $query->bindParam(":offset", $qty, PDO::PARAM_INT);
         $query->execute();
         $books = $query->fetchAll();
         return $books;
     }
 
-    public function getBooksByCategory($category)
+    public function getBooksByCategory($category, $qty)
     {
-        $query = $this->db->prepare('SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` WHERE `subject` = :category ORDER BY picksCount DESC LIMIT 50');
-        $query->execute(['category' => $category]);
+        $query = $this->db->prepare('SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` WHERE `subject` = :category ORDER BY picksCount DESC LIMIT :offset');
+        $query->bindValue(':category', $category, PDO::PARAM_STR);
+        $query->bindValue(':offset', $qty, PDO::PARAM_INT);
+        $query->execute();
         $books = $query->fetchAll(PDO::FETCH_ASSOC);
         return $books;
     }
@@ -85,7 +88,7 @@ class SubscriptionsBooksModel
 
     public function getBooksByTag($tag)
     {
-        $query = $this->db->prepare('SELECT * FROM `books` INNER JOIN `tags` ON `books`.`id` = `tags`.`book_id` WHERE `tags`.`tag` = :tag');
+        $query = $this->db->prepare('SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image` FROM `books` INNER JOIN `tags` ON `books`.`id` = `tags`.`book_id` WHERE `tags`.`tag` = :tag');
         $query->execute(['tag' => $tag]);
         $books = $query->fetchAll(PDO::FETCH_ASSOC);
         return $books;

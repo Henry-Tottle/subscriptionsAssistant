@@ -21,7 +21,7 @@ class GetBooksController
 
     public function __invoke(RequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $books = $this->subscriptionsBooksModel->getAll();
+        $books = $this->subscriptionsBooksModel->getAll($args['qty']);
         $responseBody = [
             'message' => 'Books successfully retrieved from database.',
             'status' => 200,
