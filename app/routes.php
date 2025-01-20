@@ -21,12 +21,13 @@ return function (App $app) {
         return $renderer->render($response, "index.php", $args);
     });
 
-    $app->get('/books', GetBooksController::class);
     $app->post('/books/actions/add-tag', AddTagsController::class);
     $app->get('/books/tags', GetDistinctTagsController::class);
-    $app->get('/books/tags/{tag}', GetBooksByTagController::class);
-    $app->get('/books/{category}', GetBooksByCategoryController::class);
     $app->get('/categories', GetCategoriesController::class);
+    $app->get('/books/{qty}', GetBooksController::class);
+    $app->get('/books/tags/{tag}', GetBooksByTagController::class);
+    $app->get('/books/{category}/{qty}', GetBooksByCategoryController::class);
     $app->get('/book/{id}', GetBooksByID::class);
     $app->get('/book/{id}/tags', GetTagsController::class);
+    //does this count as a change?
 };
