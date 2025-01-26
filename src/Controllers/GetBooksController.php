@@ -21,11 +21,15 @@ class GetBooksController
 
     public function __invoke(RequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $books = $this->subscriptionsBooksModel->getAll($args['qty']);
+        $qty = $args['qty'];
+        $format = $args['format'] ?? null;
+        $books = $this->subscriptionsBooksModel->getAll($qty, $format);
+        $count = $this->subscriptionsBooksModel->getCount();
         $responseBody = [
             'message' => 'Books successfully retrieved from database.',
             'status' => 200,
-            'data' => $books
+            'data' => $books,
+            'count' => $count
         ];
         return $response->withHeader('Access-Control-Allow-Origin', '*')->withJson($responseBody);
     }

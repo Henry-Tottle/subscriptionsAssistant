@@ -14,10 +14,19 @@ class SubscriptionsBooksModel
         $this->db = $db;
     }
 
-    public function getAll($qty)
+    public function getAll($qty, $format = null)
     {
-        $query = $this->db->prepare("SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` ORDER BY picksCount DESC LIMIT :offset");
-        $query->bindParam(":offset", $qty, PDO::PARAM_INT);
+        $sql = "SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books`";
+        if ($format != null) {
+            $sql .= " WHERE `format` = :format";
+        }
+        $sql .= " ORDER BY `books`.`picksCount` DESC LIMIT :limit";
+        $query = $this->db->prepare($sql);
+        if ($format)
+        {
+            $query->bindValue(':format', $format, PDO::PARAM_STR);
+        }
+        $query->bindParam(":limit", $qty, PDO::PARAM_INT);
         $query->execute();
         $books = $query->fetchAll();
         return $books;
@@ -102,5 +111,13 @@ class SubscriptionsBooksModel
         $query->execute();
         $books = $query->fetchAll(PDO::FETCH_ASSOC);
         return $books;
+    }
+
+    public function getCount()
+    {
+        $query = $this->db->prepare('SELECT count(*) as count FROM `books`');
+        $query->execute();
+        $count = $query->fetch(PDO::FETCH_ASSOC);
+        return $count;
     }
 }
