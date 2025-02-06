@@ -17,15 +17,6 @@ class AddTagsController
 
     public function __invoke(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-//        if ($request->getMethod() === 'OPTIONS') {
-//            return $response
-//                ->withHeader('Access-Control-Allow-Origin', '*') // Allow all origins (you can restrict it to specific domains)
-//                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-//                ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-//                ->withHeader('Access-Control-Allow-Credentials', 'true')
-//                ->withStatus(200);
-//        }
-
 
         if ($request->getMethod() === 'POST') {
             $body = $request->getBody()->getContents();

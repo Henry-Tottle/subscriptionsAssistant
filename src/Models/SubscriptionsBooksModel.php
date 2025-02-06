@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use DateTime;
 use PDO;
+use PDOException;
 
 
 class SubscriptionsBooksModel
@@ -14,6 +16,47 @@ class SubscriptionsBooksModel
         $this->db = $db;
     }
 
+    public function getAllBooks(array $tags = [], ?string $format = null, int $qty = 25)
+    {
+        $sql = "SELECT DISTINCT `books`.* FROM `books`";
+        $params = [];
+
+        if (!empty($tags)) {
+            $sql .= " JOIN `tags` ON `books`.`id` = `tags`.`book_id`";
+        }
+
+        $conditions = [];
+
+        if (!empty($tags)) {
+            $placeholders = implode(',', array_fill(0, count($tags), '?'));
+            $conditions[] = "`tags`.`tag` IN ($placeholders)";
+            $params = array_merge($params, $tags);
+        }
+
+        if ($format) {
+            $conditions[] = "`books`.`format` = ?";
+            $params[] = $format;
+        }
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " ORDER BY `books`.`picksCount` DESC LIMIT ?";
+
+        $params[] = $qty;
+
+        $query = $this->db->prepare($sql);
+
+        foreach ($params as $index => $param) {
+            $query->bindValue($index + 1, $param, is_int($param) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
     public function getAll($qty, $format = null)
     {
         $sql = "SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books`";
@@ -22,8 +65,7 @@ class SubscriptionsBooksModel
         }
         $sql .= " ORDER BY `books`.`picksCount` DESC LIMIT :limit";
         $query = $this->db->prepare($sql);
-        if ($format)
-        {
+        if ($format) {
             $query->bindValue(':format', $format, PDO::PARAM_STR);
         }
         $query->bindParam(":limit", $qty, PDO::PARAM_INT);
@@ -119,5 +161,65 @@ class SubscriptionsBooksModel
         $query->execute();
         $count = $query->fetch(PDO::FETCH_ASSOC);
         return $count;
+    }
+
+    public function importBooks($books)
+    {
+        $query = $this->db->prepare('SELECT `isbn` FROM `books`');
+        $query->execute();
+        $existingBooksArray = $query->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($books as $book) {
+            if (array_key_exists('PUB/REL DATE', $book)) {
+
+                $isbn = $book['ISBN/Barcode'];
+                $firstEight = substr($isbn, 0, 8);
+                $image = $firstEight . '/' . $isbn;
+
+                $dateString = $book['PUB/REL DATE'];
+
+                $date = DateTime::createFromFormat('d M Y', $dateString);
+                $sqlDate = $date->format('Y-m-d');
+
+
+                try {
+                    $query = $this->db->prepare('INSERT INTO `books` (`isbn`, `title`, `author`, `format`, `pubDate`, `price`, `image`)
+    VALUES (:isbn, :title, :author, :format, :pubDate, :price, :image)');
+                    $query->execute(['isbn' => $book['ISBN/Barcode'],
+                        'title' => $book['TITLE'],
+                        'author' => $book['AUTHOR/ARTIST/CONTRIBUTOR/BRAND'],
+                        'format' => $book['FORMAT'],
+                        'pubDate' => $sqlDate,
+                        'price' => $book['RRP'],
+                        'image' => $image]);
+                } catch (PDOException $e) {
+                    echo 'Error: ' . $e->getMessage() . "\n";
+                }
+            } elseif (array_key_exists('subject', $book)) {
+                $isbn = $book['isbn'];
+                $firstEight = substr($isbn, 0, 8);
+                $image = $firstEight . '/' . $isbn;
+
+                if (in_array($book['isbn'], $existingBooksArray)) {
+                    $query = $this->db->prepare('UPDATE `books` SET `picksCount` = :picksCount WHERE `isbn` = :isbn');
+                    $query->execute(['isbn' => $book['isbn'],
+                        'picksCount' => $book['picks_count']]);
+                } else {
+                    $query = $this->db->prepare('INSERT INTO `books` (`isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`) 
+                                                        VALUES (:isbn, :title, :author, :format, :pubDate, :publisher, :subject, :price, :picksCount, :image)');
+
+                    $query->execute(['isbn' => $book['isbn'],
+                        'title' => $book['title'],
+                        'author' => $book['author'],
+                        'format' => $book['format'],
+                        'pubDate' => $book['publish_date'],
+                        'publisher' => $book['publisher'],
+                        'subject' => $book['subject'],
+                        'price' => $book['price'],
+                        'picksCount' => $book['picks_count'],
+                        'image' => $image]);
+                }
+            }
+        }
     }
 }
