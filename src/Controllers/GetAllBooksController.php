@@ -20,10 +20,12 @@ class GetAllBooksController
         $tags = $request->getQueryParams()['tags'] ?? null;
         $format = $request->getQueryParams()['format'] ?? null;
         $limit = $request->getQueryParams()['limit'] ?? null;
+        $sort = $request->getQueryParams()['sort'] ?? null;
+        $sortOrder = $request->getQueryParams()['sortOrder'] ?? null;
 
         $tagsArray = $tags ? explode(',', $tags) : [];
 
-        $books = $this->model->getAllBooks($tagsArray, $format, $limit);
+        $books = $this->model->getAllBooks($tagsArray, $format, $limit, $sort, $sortOrder);
 
         $responseBody = [
             'message' => 'Books successfully retrieved from database',

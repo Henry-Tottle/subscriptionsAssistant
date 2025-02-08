@@ -16,8 +16,21 @@ class SubscriptionsBooksModel
         $this->db = $db;
     }
 
-    public function getAllBooks(array $tags = [], ?string $format = null, int $qty = 25)
+    public function getAllBooks(array $tags = [], ?string $format = null, int $qty = 25, $sort = "picksCount", $order = "DESC")
     {
+        $allowedSortColumns = ['picksCount', 'pubDate'];
+        $allowedOrders = ['ASC', 'DESC'];
+
+        if (!in_array($sort, $allowedSortColumns, true))
+        {
+            $sort = "picksCount";
+        }
+
+        if (!in_array($order, $allowedOrders, true))
+        {
+            $order = "DESC";
+        }
+
         $sql = "SELECT DISTINCT `books`.* FROM `books`";
         $params = [];
 
@@ -42,7 +55,8 @@ class SubscriptionsBooksModel
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY `books`.`picksCount` DESC LIMIT ?";
+
+        $sql .= " ORDER BY `books`.{$sort} {$order} LIMIT ?";
 
         $params[] = $qty;
 
