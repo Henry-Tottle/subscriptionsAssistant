@@ -55,7 +55,6 @@ class SubscriptionsBooksModel
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-
         $sql .= " ORDER BY `books`.{$sort} {$order} LIMIT ?";
 
         $params[] = $qty;
@@ -236,4 +235,19 @@ class SubscriptionsBooksModel
             }
         }
     }
+
+    public function deleteTag($id, $tag): bool
+    {
+        try {
+            $query = $this->db->prepare('DELETE FROM `tags` WHERE `tag` = :tag AND `book_id` = :book_id');
+            $query->execute(['tag' => $tag, 'book_id' => $id]);
+
+            $rowsDeleted = $query->rowCount();
+            error_log('Rows deleted: ' . $rowsDeleted);
+            return $rowsDeleted > 0;
+        } catch (PDOException $e) {
+        error_log('Error: ' . $e->getMessage() . "\n");
+        return false;
+    }
+}
 }
