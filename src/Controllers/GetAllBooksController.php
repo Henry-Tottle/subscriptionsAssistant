@@ -18,6 +18,7 @@ class GetAllBooksController
     public function __invoke(RequestInterface $request, ResponseInterface $response, $args)
     {
         $tags = $request->getQueryParams()['tags'] ?? null;
+        $category = $request->getQueryParams()['category'] ?? null;
         $format = $request->getQueryParams()['format'] ?? null;
         $limit = $request->getQueryParams()['limit'] ?? null;
         $sort = $request->getQueryParams()['sort'] ?? null;
@@ -25,7 +26,7 @@ class GetAllBooksController
 
         $tagsArray = $tags ? explode(',', $tags) : [];
 
-        $books = $this->model->getAllBooks($tagsArray, $format, $limit, $sort, $sortOrder);
+        $books = $this->model->getAllBooks($category, $tagsArray, $format, $limit, $sort, $sortOrder);
 
         $responseBody = [
             'message' => 'Books successfully retrieved from database',

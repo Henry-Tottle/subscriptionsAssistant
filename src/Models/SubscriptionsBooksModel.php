@@ -16,7 +16,7 @@ class SubscriptionsBooksModel
         $this->db = $db;
     }
 
-    public function getAllBooks(array $tags = [], ?string $format = null, int $qty = 25, $sort = "picksCount", $order = "DESC")
+    public function getAllBooks($category, array $tags = [], ?string $format = null, int $qty = 25, $sort = "picksCount", $order = "DESC")
     {
         $allowedSortColumns = ['picksCount', 'pubDate'];
         $allowedOrders = ['ASC', 'DESC'];
@@ -51,6 +51,11 @@ class SubscriptionsBooksModel
             $params[] = $format;
         }
 
+        if ($category) {
+            $conditions[] = "`books`.`subject` = ?";
+            $params[] = $category;
+        }
+
         if (!empty($conditions)) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -70,22 +75,7 @@ class SubscriptionsBooksModel
         return $query->fetchAll();
     }
 
-    public function getAll($qty, $format = null)
-    {
-        $sql = "SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books`";
-        if ($format != null) {
-            $sql .= " WHERE `format` = :format";
-        }
-        $sql .= " ORDER BY `books`.`picksCount` DESC LIMIT :limit";
-        $query = $this->db->prepare($sql);
-        if ($format) {
-            $query->bindValue(':format', $format, PDO::PARAM_STR);
-        }
-        $query->bindParam(":limit", $qty, PDO::PARAM_INT);
-        $query->execute();
-        $books = $query->fetchAll();
-        return $books;
-    }
+
 
     public function getBooksByCategory($category, $qty)
     {
