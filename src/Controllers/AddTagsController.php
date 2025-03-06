@@ -17,6 +17,16 @@ class AddTagsController
 
     public function __invoke(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
+        $origin = 'https://subscriptionsassistantfe.2024-henryt.dev.io-academy.uk';
+
+        if ($request->getMethod() === 'OPTIONS') {
+            return $response
+                ->withHeader('Access-Control-Allow-Origin', $origin)
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+                ->withHeader('Access-Control-Allow-Credentials', 'true')
+                ->withStatus(200);
+        }
 
         if ($request->getMethod() === 'POST') {
             $body = $request->getBody()->getContents();
@@ -28,7 +38,7 @@ class AddTagsController
                     'message' => 'Invalid input. "tag" and "book_id" are required',
                     'status' => 400
                 ];
-                return $response->withHeader('Access-Control-Allow-Origin', '*')
+                return $response->withHeader('Access-Control-Allow-Origin', $origin)
                     ->withHeader('Content-Type', 'application/json')
                     ->withStatus(400)
                     ->withJson($errorResponse);
@@ -42,9 +52,9 @@ class AddTagsController
                 'tag' => $tag
             ];
 
-            return $response->withHeader('Access-Control-Allow-Origin', '*')
+            return $response->withHeader('Access-Control-Allow-Origin', $origin)
                 ->withHeader('Content-Type', 'application/json')
-//                ->withHeader('Access-Control-Allow-Credentials', 'true')
+                ->withHeader('Access-Control-Allow-Credentials', 'true')
                 ->withStatus(201)
                 ->withJson($responseBody);
         }
@@ -54,8 +64,9 @@ class AddTagsController
             'status' => 405
         ];
 
-        return $response->withHeader('Access-Control-Allow-Origin', '*')
+        return $response->withHeader('Access-Control-Allow-Origin', $origin)
             ->withHeader('Content-Type', 'application/json')
+            ->withHeader('Access-Control-Allow-Credentials', 'true')
             ->withStatus(405)
             ->withJson($errorResponse);
 

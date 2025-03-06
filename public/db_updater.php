@@ -24,12 +24,12 @@ $books = $query->fetchAll();
 
 //This works great to import subjects into the list, consider reworking and making a function that can be used by a front end?
 
-$fantasyBooks = file_get_contents('crimeISBNS.txt');
-$fantasyBooksArray = explode(',',$fantasyBooks);
+$fantasyBooks = file_get_contents('newerSciFi.txt');
+$fantasyBooksArray = explode(PHP_EOL,$fantasyBooks);
 echo gettype($fantasyBooksArray);
 //var_dump($fantasyBooksArray);
 foreach($fantasyBooksArray as $fantasyBook){
-    $subject = '["CRIME AND MYSTERY"]';
+    $subject = '["SCIENCE-FICTION"]';
     $fantasyBook = trim($fantasyBook);
     try {
         $query = $db->prepare('UPDATE `books` SET `subject` = :subject WHERE `isbn` = :isbn');

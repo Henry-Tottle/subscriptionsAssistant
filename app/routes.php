@@ -4,11 +4,9 @@ declare(strict_types=1);
 use App\Controllers\GetTagsController;
 use Slim\App;
 use Slim\Views\PhpRenderer;
-use App\Controllers\GetBooksByCategoryController;
 use App\Controllers\GetCategoriesController;
 use App\Controllers\GetBooksByID;
 use App\Controllers\AddTagsController;
-use App\Controllers\GetBooksByTagController;
 use App\Controllers\GetDistinctTagsController;
 use App\Controllers\GetBooksBySearch;
 use App\Controllers\GetAllBooksController;
@@ -30,10 +28,9 @@ return function (App $app) {
     $app->get('/books/search/{search}/{qty}', GetBooksBySearch::class);
     $app->get('/categories', GetCategoriesController::class);
     $app->get('/books/filter', GetAllBooksController::class);
-    $app->get('/books/tags/{tag}', GetBooksByTagController::class);
-    $app->get('/books/category/{category}/{qty}', GetBooksByCategoryController::class);
     $app->get('/book/{id}', GetBooksByID::class);
     $app->get('/book/{id}/tags', GetTagsController::class);
     $app->delete('/delete/tags/{id}/{tag}', DeleteTagController::class);
+    $app->post('/login', \App\Controllers\LoginController::class);
 
 };

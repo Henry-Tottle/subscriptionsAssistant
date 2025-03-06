@@ -1,0 +1,17 @@
+[2025-02-23 13:47:36] Database Error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'subscriptions_test_database.users' doesn't exist
+
+[2025-02-23 13:48:27] Stored hash: $2b$10$txH71iVluhaprKCyzVGO4.IL2CX6NxBEeiSauTf7InxskpijPW.5C
+[2025-02-23 13:48:27] Entered password: password
+[2025-02-23 13:48:27] Password verification failed!
+[2025-02-23 13:49:36] Stored hash: $2y$10$v/hnZZ8gEVA.dfJ1.al5bOlhBFczZhyyPVhcgaHBPCP4cstEsVscG
+[2025-02-23 13:49:36] Entered password: password
+[2025-02-23 13:49:36] Password verification successful!
+[2025-02-23 13:49:44] Stored hash: $2y$10$v/hnZZ8gEVA.dfJ1.al5bOlhBFczZhyyPVhcgaHBPCP4cstEsVscG
+[2025-02-23 13:49:44] Entered password: password
+[2025-02-23 13:49:44] Password verification successful!
+[2025-02-23 13:49:48] Stored hash: $2y$10$v/hnZZ8gEVA.dfJ1.al5bOlhBFczZhyyPVhcgaHBPCP4cstEsVscG
+[2025-02-23 13:49:48] Entered password: password1
+[2025-02-23 13:49:48] Password verification failed!
+[2025-02-23 13:49:52] Stored hash: $2y$10$v/hnZZ8gEVA.dfJ1.al5bOlhBFczZhyyPVhcgaHBPCP4cstEsVscG
+[2025-02-23 13:49:52] Entered password: password
+[2025-02-23 13:49:52] Password verification successful!

@@ -5,6 +5,8 @@ namespace App\Models;
 use DateTime;
 use PDO;
 use PDOException;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 
 class SubscriptionsBooksModel
@@ -21,13 +23,11 @@ class SubscriptionsBooksModel
         $allowedSortColumns = ['picksCount', 'pubDate'];
         $allowedOrders = ['ASC', 'DESC'];
 
-        if (!in_array($sort, $allowedSortColumns, true))
-        {
+        if (!in_array($sort, $allowedSortColumns, true)) {
             $sort = "picksCount";
         }
 
-        if (!in_array($order, $allowedOrders, true))
-        {
+        if (!in_array($order, $allowedOrders, true)) {
             $order = "DESC";
         }
 
@@ -75,17 +75,6 @@ class SubscriptionsBooksModel
         return $query->fetchAll();
     }
 
-
-
-    public function getBooksByCategory($category, $qty)
-    {
-        $query = $this->db->prepare('SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image`  FROM `books` WHERE `subject` = :category ORDER BY picksCount DESC LIMIT :offset');
-        $query->bindValue(':category', $category, PDO::PARAM_STR);
-        $query->bindValue(':offset', $qty, PDO::PARAM_INT);
-        $query->execute();
-        $books = $query->fetchAll(PDO::FETCH_ASSOC);
-        return $books;
-    }
 
     public function getCategories()
     {
@@ -138,14 +127,6 @@ class SubscriptionsBooksModel
         $query = $this->db->prepare('INSERT INTO `tags` (`book_id`, `tag`) VALUES (:book_id, :tag)');
         $query->execute(['book_id' => $id, 'tag' => $tag]);
 
-    }
-
-    public function getBooksByTag($tag)
-    {
-        $query = $this->db->prepare('SELECT `books`.`id`, `isbn`, `title`, `author`, `format`, `pubDate`, `publisher`, `subject`, `price`, `picksCount`, `image` FROM `books` INNER JOIN `tags` ON `books`.`id` = `tags`.`book_id` WHERE `tags`.`tag` = :tag');
-        $query->execute(['tag' => $tag]);
-        $books = $query->fetchAll(PDO::FETCH_ASSOC);
-        return $books;
     }
 
     public function getBooksBySearch($search, $qty)
@@ -236,8 +217,45 @@ class SubscriptionsBooksModel
             error_log('Rows deleted: ' . $rowsDeleted);
             return $rowsDeleted > 0;
         } catch (PDOException $e) {
-        error_log('Error: ' . $e->getMessage() . "\n");
-        return false;
+            error_log('Error: ' . $e->getMessage() . "\n");
+            return false;
+        }
     }
-}
+
+    public function login($username, $password): bool
+    {
+        try {
+            $query = $this->db->prepare('SELECT `password` FROM `user` WHERE `username` = :username');
+            $query->execute(['username' => $username]);
+            $storedPassword = $query->fetch(PDO::FETCH_ASSOC);
+
+            if (!$storedPassword) {
+                $this->logError("No user found for username: $username");
+                return false;
+            }
+
+            $this->logError("Stored hash: " . $storedPassword['password']);
+            $this->logError("Entered password: $password");
+
+            if (password_verify($password, $storedPassword['password'])) {
+                $this->logError("Password verification successful!");
+                return true;
+            } else {
+                $this->logError("Password verification failed!");
+                return false;
+            }
+
+
+
+        } catch (PDOException $e) {
+            $this->logError("Database Error: " . $e->getMessage() . "\n");
+            return false;
+        }
+    }
+
+    private function logError($message) {
+        $logFile = __DIR__ . '/../../public/logs/error.log';
+        $timestamp = date('Y-m-d H:i:s');
+        error_log("[$timestamp] $message\n", 3, $logFile);
+    }
 }
